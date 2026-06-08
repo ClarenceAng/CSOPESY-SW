@@ -4,10 +4,10 @@
 #include <iostream>
 #include <thread>
 
-// running flag is the program is running or not
+// running flag if the program is running or not
 std::atomic<bool> running{true};
 
-// worker function to print the thread
+// worker function to print output of threads
 void worker(int id) {
     while (running.load(std::memory_order_relaxed)) {
         std::cout << "This is a hello world in a thread # " << id << "\n";
@@ -16,17 +16,18 @@ void worker(int id) {
 }
 
 int main(int argc, char* argv[]) {
+    // just parsing command line output and if none specified spawn 20
     int n = (argc > 1) ? std::atoi(argv[1]) : 20;
     if (n <= 0){
         n = 20;
     } 
 
-    // spawn N threads given the parameter in the CLI command func and detach them
+    // spawn N threads, execute, then detach them
     for (int i = 0; i < n; ++i) {
         std::thread(worker, i).detach();
     }
 
-    //run forever. The detached threads keep printing until the program is killed
+    //run forever until stop/ctrl+c
     while (true) {
         std::this_thread::sleep_for(std::chrono::milliseconds(200));
     }
