@@ -17,7 +17,6 @@ void worker(int id) {
 
 int main(int argc, char* argv[]) {
     int n = (argc > 1) ? std::atoi(argv[1]) : 20;
-    int seconds = (argc > 2) ? std::atoi(argv[2]) : 2;
     if (n <= 0){
         n = 20;
     } 
@@ -27,11 +26,10 @@ int main(int argc, char* argv[]) {
         std::thread(worker, i).detach();
     }
 
-    std::this_thread::sleep_for(std::chrono::seconds(seconds));
-
-    // signal the detached threads to stop, then give them a bit to finish
-    running.store(false, std::memory_order_relaxed);
-    std::this_thread::sleep_for(std::chrono::milliseconds(300));
+    //run forever. The detached threads keep printing until the program is killed
+    while (true) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    }
 
     return 0;
 }
